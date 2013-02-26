@@ -1,9 +1,57 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title></title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+    <script src="../messageformat.js"></script>
+    <script src="../locale/sk.js"></script>
 </head>
 <body>
+<div id="content">
+</div>
 
+<script type="text/javascript">
+    var lastFunc;
+
+    function p(message, lang, data) {
+        var mf, res;
+
+        if (arguments.length === 1) {
+            data = message;
+            mf_func = lastFunc;
+        } else {
+            mf = new MessageFormat(lang);
+            lastFunc = mf.compile(message);
+        }
+
+        res = lastFunc(data);
+
+        $('<div>').text(res).appendTo('#content');
+    }
+
+    p(
+            "{PERSON} added {PLURAL_NUM_PEOPLE, plural, offset:1" +
+                    "     =0 {no one}" +
+                    "     =1 {just {GENDER, select, male {him} female {her} other{them}}self}" +
+                    "    one {{GENDER, select, male {him} female {her} other{them}}self and one other person}" +
+                    "  other {{GENDER, select, male {him} female {her} other{them}}self and # other people}" +
+                    "} to {GENDER, select," +
+                    "   male {his}" +
+                    " female {her}" +
+                    "  other {their}" +
+                    "} group.",
+            "en",
+            {
+                PLURAL_NUM_PEOPLE: 0,
+                PERSON: "Allie Sexton",
+                GENDER: "female"
+            }
+    );
+
+    p({
+        PLURAL_NUM_PEOPLE: 2,
+        PERSON: "Allie Sexton",
+        GENDER: "female"
+    });
+</script>
 </body>
 </html>
